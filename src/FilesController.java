@@ -1,17 +1,20 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class FilesController {
 
 	// Variables
-	private String filePath;
+	private static String filePath;
 	
 	// Constructor
 	public FilesController(String filePath) {
-		setFileName(filePath);
+		setFilePath(filePath);
 	}
 
 	/* 
@@ -20,40 +23,44 @@ public class FilesController {
 	 * ================
 	 */
 	
-	// Read Data From file
-	public ArrayList<String> readData() {
-		ArrayList<String> inputFile = new ArrayList<String>();
-		BufferedReader reader;
-		try {
-			reader = new BufferedReader(new FileReader(filePath));
-			String line = reader.readLine();
-			while (line != null) {
-				inputFile.add(line);
-				line = reader.readLine();
-			}
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return inputFile;
+	// Read input from user in one stream
+	public static String readInput(){
+        String stream = "";
+        BufferedReader code = null;
+        try{
+        	code = new BufferedReader(new FileReader(getFilePath()));
+            String code_line;
+            while ((code_line = code.readLine()) != null){
+                stream += code_line;
+                stream += '\n';
+            }
+        }catch (Exception e) { 
+        	e.printStackTrace();
+        }
+        return stream;
 	}
 	
 	// Read mapping table from files
-	public HashMap<String, String> getTable() {
-		HashMap<String, String> mappingTable = new HashMap<String, String>();
-		BufferedReader namesReader, tokensReader;
+	public ArrayList<Token> getTable() {
+		ArrayList<Token> mappingTable = new ArrayList<Token>();
+		BufferedReader namesReader, tokensReader , regexReader;
 		try {
 			namesReader = new BufferedReader(new FileReader("names.txt"));
 			tokensReader = new BufferedReader(new FileReader("tokens.txt"));
+			regexReader = new BufferedReader(new FileReader("regex.txt"));
 			String namesLine = namesReader.readLine();
 			String tokensLine = tokensReader.readLine();
-			while (namesLine != null && tokensLine != null) {
-				mappingTable.put(tokensLine, namesLine);
+			String regexLine = regexReader.readLine();
+			while (namesLine != null && tokensLine != null && regexLine != null  ) {
+				Token token = new Token(namesLine , tokensLine , regexLine);
+				mappingTable.add(token);
 				namesLine = namesReader.readLine();
 				tokensLine = tokensReader.readLine();
+				regexLine = regexReader.readLine();
 			}
 			namesReader.close();
 			tokensReader.close();
+			regexReader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -61,21 +68,45 @@ public class FilesController {
 	}
 	
 	// Write program output to the file
-	public void writeOutput() {
-		
+	public void logOutput(ArrayList<Tokenized> tokenizedList) {
+		File fout = new File("output.txt");
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(fout);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+			for (int i = 0; i < tokenizedList.size(); i++) {
+				bw.write(tokenizedList.get(i).TokenName + "   " + tokenizedList.get(i).Token);
+				bw.newLine();
+			}
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	// Write program error to the file
-	public void writeError() {
-		
+	public void logErrors(ArrayList<String> Errors) {
+		File fout = new File("output.txt");
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(fout);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+			for (int i = 0; i < Errors.size(); i++) {
+				bw.write(Errors.get(i));
+				bw.newLine();
+			}
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	// Setter and Getters
-	public String getFileName() {
+	public static String getFilePath() {
 		return filePath;
 	}
 
-	public void setFileName(String filePath) {
-		this.filePath = filePath;
+	public static void setFilePath(String filePath) {
+		FilesController.filePath = filePath;
 	}
 }
