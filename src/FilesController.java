@@ -75,7 +75,7 @@ public class FilesController {
 			fos = new FileOutputStream(fout);
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 			for (int i = 0; i < tokenizedList.size(); i++) {
-				bw.write(tokenizedList.get(i).TokenName + "   " + tokenizedList.get(i).Token);
+				bw.write(tokenizedList.get(i).TokenName + " : " + tokenizedList.get(i).Token);
 				bw.newLine();
 			}
 			bw.close();
