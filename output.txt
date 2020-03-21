@@ -1,32 +1,34 @@
-<INT>   int
-<ID>   id
+<INT>   int 
+<ID>   intvalue
 <ASSIGN_OPERATOR>   =
-<INTEGRAL_LITERAL>   integral_literal
+<INTEGRAL_LITERAL>    1 
 <EOF>   0
 <PLUS>   +
-<FLOAT_LITERAL>   float_literal
+<FLOAT_LITERAL>   5.6
 <SEMICOLON>   ;
 <BOOL>   bool
-<ID>   id
+<ID>   isPowerOfTwo
 <RIGHT_ROUND_B>   (
-<INT>   int
-<ID>   id
+<INT>   int 
+<ID>   x
 <LEFT_ROUND_B>   )
 <RIGHT_CURLY_B>   {
-<SINGLE_COMMENT>   single_comment
-<SINGLE_COMMENT>   single_comment
-<RETURN>   return
-<ID>   id
+<SINGLE_COMMENT>   // First x in the below expression is
+
+<SINGLE_COMMENT>   // for the case when x is 0
+
+<RETURN>   return 
+<ID>   x
 <AND>   &&
 <RIGHT_ROUND_B>   (
 <NOT>   !
 <RIGHT_ROUND_B>   (
-<ID>   id
+<ID>   x
 <BITWISE_AND>   &
 <RIGHT_ROUND_B>   (
-<ID>   id
+<ID>   x
 <MINUS>   -
-<INTEGRAL_LITERAL>   integral_literal
+<INTEGRAL_LITERAL>    1)
 <LEFT_ROUND_B>   )
 <LEFT_ROUND_B>   )
 <SEMICOLON>   ;
