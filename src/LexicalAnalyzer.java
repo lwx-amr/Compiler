@@ -7,12 +7,15 @@ public class LexicalAnalyzer {
 
 	// Variables
 	ArrayList<Token> mappingTable;
+	ArrayList<Tokenized> tokenizedList;
 	String inputFile;
+	ErrorsChecker errorsChecker;
 	
 	// Constructor
 	public LexicalAnalyzer(ArrayList<Token> mappingTable, String inputFile) {
 		this.mappingTable = mappingTable;
 		this.inputFile = inputFile;
+		this.errorsChecker = new ErrorsChecker();
 	}
 
 	/*
@@ -22,8 +25,8 @@ public class LexicalAnalyzer {
 	 */
 
 	// The main function that tokenizes the input
-	public ArrayList<Tokenized> Tokenization() {
-		ArrayList<Tokenized> tokenizedList = new ArrayList<>();
+	public void Tokenization() {
+		tokenizedList = new ArrayList<>();
 		try {
 			for (Token tk : this.mappingTable) {
 				ArrayList<Tokenized> newTokenized = checkRegex(tk);
@@ -38,7 +41,7 @@ public class LexicalAnalyzer {
 			System.out.println("Pattern: " + e.getPattern());
 		}
 		tokenizedList = TokenizationOrders(tokenizedList);
-		return tokenizedList;
+		lexicalLogger();
 	}
 
 	// Detected patterns matchers with regex
@@ -50,7 +53,7 @@ public class LexicalAnalyzer {
 			if (RegexMatcher.group().length() != 0) {
 				Tokenized alreadyTaken = new Tokenized();
 				alreadyTaken.setTokenName("<" + token.getType() + ">");
-				alreadyTaken.setToken(token.getValue().trim());
+				alreadyTaken.setToken(RegexMatcher.group(0));
 				alreadyTaken.setIndex(RegexMatcher.start());
 				//System.out.println(RegexMatcher.start() + "   " + RegexMatcher.end());
 				StringBuffer tempBuffer = new StringBuffer();
@@ -61,7 +64,7 @@ public class LexicalAnalyzer {
 				tempBuffer.replace(RegexMatcher.start(), RegexMatcher.end(), bufferStr);
 				// sb.delete(RegexMatcher.start(),RegexMatcher.end());
 				this.inputFile = tempBuffer.toString();
-				currentTokenizedList .add(alreadyTaken);
+				currentTokenizedList.add(alreadyTaken);
 			}
 		}
 		return currentTokenizedList ;
@@ -83,4 +86,14 @@ public class LexicalAnalyzer {
 		return tokenized_s;
 	}
 
+	// Error Checking and logging
+	public void lexicalLogger() {
+		System.out.println("Logger");
+		ArrayList<String> errorsMsgs= errorsChecker.lexicalCheck(tokenizedList);
+		if(errorsMsgs.size()!=0)
+			FilesController.logErrors(errorsMsgs);
+		else 
+			FilesController.logOutput(tokenizedList);
+	}
+	
 }

@@ -31,12 +31,10 @@ public class Compiler {
 		/*
 		 * Step One
 		 * Calling Lexical analyzer for tokenization
-		 * Log output
 		 */
 		lexicalAnalyzer = new LexicalAnalyzer(mappingTable, inputFile);
-		ArrayList<Tokenized> tokenizedList = lexicalAnalyzer.Tokenization();
-		filesController.logOutput(tokenizedList);
-
+		lexicalAnalyzer.Tokenization();
+		
 	}	
 	
 	public static void main(String[] args) {

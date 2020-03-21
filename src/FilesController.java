@@ -68,14 +68,14 @@ public class FilesController {
 	}
 	
 	// Write program output to the file
-	public void logOutput(ArrayList<Tokenized> tokenizedList) {
+	public static void logOutput(ArrayList<Tokenized> tokenizedList) {
 		File fout = new File("output.txt");
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(fout);
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 			for (int i = 0; i < tokenizedList.size(); i++) {
-				bw.write(tokenizedList.get(i).TokenName + "   " + tokenizedList.get(i).Token);
+				bw.write(tokenizedList.get(i).TokenName + " : " + tokenizedList.get(i).Token);
 				bw.newLine();
 			}
 			bw.close();
@@ -85,7 +85,7 @@ public class FilesController {
 	}
 	
 	// Write program error to the file
-	public void logErrors(ArrayList<String> Errors) {
+	public static void logErrors(ArrayList<String> Errors) {
 		File fout = new File("output.txt");
 		FileOutputStream fos;
 		try {

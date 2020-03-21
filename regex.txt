@@ -37,7 +37,7 @@ unsigned
 void\s
 volatile
 while
-[a-zA-Z]+\w*
+[0-9]*[a-zA-Z]+\w*
 [^\.][0-9]+[^\.]
 -*[0-9]+\.[0-9]+
 [a-zA-Z]+
