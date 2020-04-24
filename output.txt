@@ -1,7 +1,7 @@
-<INT> : int 
+<INT> : int
 <ID> : intvalue
 <ASSIGN_OPERATOR> : =
-<INTEGRAL_LITERAL> :  1 
+<INTEGRAL_LITERAL> : 1
 <EOF> : 0
 <PLUS> : +
 <FLOAT_LITERAL> : 5.6
@@ -9,15 +9,13 @@
 <BOOL> : bool
 <ID> : isPowerOfTwo
 <RIGHT_ROUND_B> : (
-<INT> : int 
+<INT> : int
 <ID> : x
 <LEFT_ROUND_B> : )
 <RIGHT_CURLY_B> : {
 <SINGLE_COMMENT> : // First x in the below expression is
-
 <SINGLE_COMMENT> : // for the case when x is 0
-
-<RETURN> : return 
+<RETURN> : return
 <ID> : x
 <AND> : &&
 <RIGHT_ROUND_B> : (
@@ -28,7 +26,7 @@
 <RIGHT_ROUND_B> : (
 <ID> : x
 <MINUS> : -
-<INTEGRAL_LITERAL> :  1)
+<INTEGRAL_LITERAL> : 1)
 <LEFT_ROUND_B> : )
 <LEFT_ROUND_B> : )
 <SEMICOLON> : ;
