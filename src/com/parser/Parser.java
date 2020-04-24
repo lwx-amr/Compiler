@@ -4,13 +4,13 @@ import com.lexical.Token;
 import com.parser.rules.*;
 import java.util.ArrayList;
 
-public class SyntaxAnalyzer {
+public class Parser {
 
     // Variables
     private ArrayList<Token> lexicalOutput;
 
     // Constructor
-    public SyntaxAnalyzer(ArrayList<Token> lexicalOutput) {
+    public Parser(ArrayList<Token> lexicalOutput) {
         this.lexicalOutput = lexicalOutput;
     }
 
@@ -27,8 +27,12 @@ public class SyntaxAnalyzer {
 
     // Function of the program rule in cGram
     private Program programRFun(){
-
-        return null;
+        Decl_List decl_list= decl_listRFun();
+        if (decl_list == null){
+            System.out.println("Syntax Error!!");
+            return null;
+        }
+        return new Program(decl_list);
     }
 
     // Function of the decl_list rule in cGram

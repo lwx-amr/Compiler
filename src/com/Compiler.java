@@ -2,7 +2,7 @@ package com;
 
 import com.lexical.LexicalAnalyzer;
 import com.lexical.TableCell;
-import com.parser.SyntaxAnalyzer;
+import com.parser.Parser;
 
 import java.util.ArrayList;
 
@@ -43,8 +43,8 @@ public class Compiler {
 		 * Step Two
 		 * Calling Syntax analyzer
 		 */
-		SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzer(filesController.readLexicalOutput());
-		syntaxAnalyzer.parse();
+		Parser parser = new Parser(filesController.readLexicalOutput());
+		parser.parse();
 	}
 	
 	public static void main(String[] args) {
