@@ -11,6 +11,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class FilesController {
 
@@ -107,8 +109,8 @@ public class FilesController {
 	}
 
 	// Read Lexical output
-	public ArrayList<Token> readLexicalOutput(){
-		ArrayList<Token> tokenList = new ArrayList<>();
+	public Queue<Token> readLexicalOutput(){
+		Queue<Token> tokenList = new LinkedList<>();
 		BufferedReader bufferedReader;
 		try{
 			bufferedReader = new BufferedReader(new FileReader("output.txt"));
