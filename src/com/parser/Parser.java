@@ -79,13 +79,11 @@ public class Parser {
             Token eIDToken = lexicalOutput.peek();
             if(eIDToken.tokenName.equals("<ID>")){
                 lexicalOutput.poll();
-                Token nextToID = lexicalOutput.peek();
+                Token nextToID = lexicalOutput.poll();
                 if(nextToID.tokenName.equals("<SEMICOLON>")){
-                    lexicalOutput.poll();
                     return new Var_decl(type_spec, eIDToken, nextToID);
                 }
                 if(nextToID.tokenName.equals("<RIGHT_SQUARE_B>")){
-                    lexicalOutput.poll();
                     Token eLeftSquare = lexicalOutput.peek();
                     if(eLeftSquare.tokenName.equals("<LEFT_SQUARE_B>")){
                         lexicalOutput.poll();
@@ -219,18 +217,16 @@ public class Parser {
 
     // Function of the compound_stmt rule in cGram
     private Compound_stmt compound_stmtRFun(){
-    	System.out.println("<----------- Test1 ------------->");
-		for(Token t : lexicalOutput)
-		    System.out.println(t.tokenName);
-		System.out.println("<------------ Test1 ------------>\n");
         Token token1 = lexicalOutput.peek(), token2;
         if ((token1 != null) && token1.tokenName.equals("<RIGHT_CURLY_B>")) {
         	lexicalOutput.poll();
         	Local_decls local_decls = local_declsRFun();
         	Stmt_list stmt_list = stmt_listRFun();
         	token2 = lexicalOutput.peek();
-        	if(token2.tokenName.equals("<LEFT_CURLY_B>"))
+        	if(token2.tokenName.equals("<LEFT_CURLY_B>")) {
+        		lexicalOutput.poll();
         		return new Compound_stmt(token2, token1, local_decls,  stmt_list);
+        	}
         }
         return null;
     }
@@ -248,18 +244,16 @@ public class Parser {
         Queue<Token> temp = new LinkedList<>(lexicalOutput);
         Type_spec type_spec = type_specRFun();
         Token eIDToken = lexicalOutput.peek();
-        if (type_spec != null && eIDToken.tokenName.equals("<ID>")){
+        if (type_spec != null && eIDToken!=null &&eIDToken.tokenName.equals("<ID>")){
             lexicalOutput.poll();
-            Token nextToID = lexicalOutput.peek();
-            if (nextToID.tokenName.equals("<SEMICOLON>")) {
-            	lexicalOutput.poll();
+            Token nextToID = lexicalOutput.poll();
+            if (nextToID.tokenName.equals("<SEMICOLON>"))
             	return new Local_decl(type_spec, eIDToken, nextToID);
-            }
             Token eLeftBracket = lexicalOutput.poll() , token4 = lexicalOutput.poll();
             if (nextToID.tokenName.equals("<RIGHT_SQUARE_B>") && eLeftBracket.tokenName.equals("<LEFT_SQUARE_B>")
-	                    && token4.tokenName.equals("<SEMICOLAN>"))
-                return new Local_decl(type_spec, eIDToken, eLeftBracket, nextToID, token4);
-        }        
+	                    && token4.tokenName.equals("<SEMICOLON>"))                 
+            	return new Local_decl(type_spec, eIDToken, nextToID, eLeftBracket, token4);
+        }
         lexicalOutput = temp;
         return null;
     }
@@ -309,8 +303,8 @@ public class Parser {
         Token token1 = lexicalOutput.poll(), token2;
         Expr expr = exprRFun();
         token2 = lexicalOutput.poll();
-        if (token1 != null && token1.tokenName.equals("<RETURN>") && token2 != null && token2.tokenName.equals("<SEMICOLAN>")){
-            if (expr != null)
+        if (token1 != null && token1.tokenName.equals("<RETURN>") && token2 != null && token2.tokenName.equals("<SEMICOLON>")){
+        	if (expr != null)
                 return new Return_stmt(token1, token2, expr);
             return new Return_stmt(token1, token2);
         }
@@ -322,7 +316,7 @@ public class Parser {
     public Break_stmt break_stmtRFun() {
         Queue<Token> temp = new LinkedList<>(lexicalOutput);
         Token token1 = lexicalOutput.poll() , token2 = lexicalOutput.poll();
-        if (token1 != null && token1.tokenName.equals("<BREAK>") && token2 != null && token2.tokenName.equals("<SEMICOLAN>"))
+        if (token1 != null && token1.tokenName.equals("<BREAK>") && token2 != null && token2.tokenName.equals("<SEMICOLON>"))
             return new Break_stmt(token1, token2);
         lexicalOutput = temp;
         return null;
