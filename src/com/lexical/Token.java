@@ -33,7 +33,7 @@ public class Token {
     }
 
     public void setTokenName(String tokenName) {
-        tokenName = tokenName;
+        this.tokenName = tokenName;
     }
 
     public String getValue() {
@@ -41,7 +41,7 @@ public class Token {
     }
 
     public void setValue(String value) {
-        value = value;
+        this.value = value;
     }
 
     public int getIndex() {
@@ -49,6 +49,6 @@ public class Token {
     }
 
     public void setIndex(int index) {
-        index = index;
+        this.index = index;
     }
 }

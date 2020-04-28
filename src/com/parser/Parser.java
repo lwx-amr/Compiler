@@ -325,8 +325,6 @@ public class Parser {
 
     // Function of the expr rule in cGram
     private Expr exprRFun(){
-    	if(true)
-    		return null;
         Token token1=lexicalOutput.poll(),token2=lexicalOutput.peek();
         if(token1.tokenName.equals("<ID>") && token2.tokenName.equals("<ASSIGN_OPERATOR>")){
             lexicalOutput.poll();
