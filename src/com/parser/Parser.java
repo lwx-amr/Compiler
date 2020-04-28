@@ -5,6 +5,7 @@ import com.parser.rules.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class Parser {
@@ -16,7 +17,7 @@ public class Parser {
     // Constructor
     public Parser(Queue<Token> lexicalOutput) {
         this.lexicalOutput = lexicalOutput;
-        this.types = new ArrayList<>(Arrays.asList("<VOID>", "<BOOl>", "<INT>", "<FLOAT>"));
+        this.types = new ArrayList<>(Arrays.asList("<VOID>", "<BOOL>", "<INT>", "<FLOAT>"));
         this.operators = new ArrayList<>(Arrays.asList(
                 "<OR>", "<AND>", "<EQUAL>", "<NOT_EQUAL>",
                 "<GREAT_EQ>","<LESS_EQ>","<LESSTHAN>", "<GREATERTHAN>",
@@ -31,7 +32,11 @@ public class Parser {
 
     // The main function to run the process of creating parse tree
     public Program parse(){
-            return programRFun();
+		System.out.println("<----------- Begin ------------->");
+		for(Token t : lexicalOutput)
+		    System.out.println(t.tokenName);
+		System.out.println("<------------ Begin ------------>\n");
+		return programRFun();
     }
 
     // Function of the program rule in cGram
@@ -46,10 +51,6 @@ public class Parser {
 
     // Function of the decl_list rule in cGram
     private Decl_List decl_listRFun(){
-        for(Token t : lexicalOutput){
-            System.out.println(t.tokenName);
-        }
-        System.out.println("<------------------------>");
         Decl decl = declRFun();
         if(decl==null)
             return null;
@@ -61,70 +62,67 @@ public class Parser {
 
     // Function of the decl rule in cGram
     private Decl declRFun(){
-        for(Token t : lexicalOutput)
-            System.out.println(t.tokenName);
-        System.out.println("<------------------------>");
         Var_decl var_decl = var_declRFun();
         if(var_decl!=null)
             return new Decl(var_decl);
         Fun_decl fun_decl = fun_declRFun();
         if(fun_decl!=null)
-            return new Decl(fun_decl);
+        	return new Decl(fun_decl);
         return null;
     }
 
     // Function of the var_decl rule in cGram
     private Var_decl var_declRFun(){
+    	Queue<Token> temp = new LinkedList<>(lexicalOutput);
         Type_spec type_spec = type_specRFun();
         if(type_spec!=null){
             Token eIDToken = lexicalOutput.peek();
             if(eIDToken.tokenName.equals("<ID>")){
+                lexicalOutput.poll();
+                Token nextToID = lexicalOutput.peek();
+                if(nextToID.tokenName.equals("<SEMICOLON>")){
                     lexicalOutput.poll();
-                    Token nextToID = lexicalOutput.peek();
-                    if(nextToID.tokenName.equals("<SEMICOLON>")){
+                    return new Var_decl(type_spec, eIDToken, nextToID);
+                }
+                if(nextToID.tokenName.equals("<RIGHT_SQUARE_B>")){
+                    lexicalOutput.poll();
+                    Token eLeftSquare = lexicalOutput.peek();
+                    if(eLeftSquare.tokenName.equals("<LEFT_SQUARE_B>")){
                         lexicalOutput.poll();
-                        return new Var_decl(type_spec, eIDToken, nextToID);
-                    }
-                    if(nextToID.tokenName.equals("<RIGHT_SQUARE_B>")){
-                        lexicalOutput.poll();
-                        Token eLeftSquare = lexicalOutput.peek();
-                        if(eLeftSquare.tokenName.equals("<LEFT_SQUARE_B>")){
+                        Token nextToLeftSQ = lexicalOutput.peek();
+                        if(nextToLeftSQ.tokenName.equals("<SEMICOLON>")){
                             lexicalOutput.poll();
-                            Token nextToLeftSQ = lexicalOutput.peek();
-                            if(nextToLeftSQ.tokenName.equals("<SEMICOLON>")){
-                                lexicalOutput.poll();
-                                return new Var_decl(type_spec, eIDToken, nextToID, eLeftSquare, nextToLeftSQ);
-                            }
+                            return new Var_decl(type_spec, eIDToken, nextToID, eLeftSquare, nextToLeftSQ);
                         }
                     }
                 }
+            }
         }
+        lexicalOutput = temp;
         return null;
     }
 
     // Function of the type_spec rule in cGram
     private Type_spec type_specRFun(){
         Token token=lexicalOutput.poll();
-        if (token != null && types.indexOf(token.tokenName) != -1)
-            return new Type_spec(token);
+        if (token != null && types.indexOf(token.tokenName) != -1) {
+        	return new Type_spec(token);
+        }
         return null;
     }
 
     // Function of the fun_decl rule in cGram
     private Fun_decl fun_declRFun(){
-        for(Token t : lexicalOutput){
-            System.out.println(t.tokenName);
-        }
-        System.out.println("@<------------------------>");
+    	Queue<Token> temp = new LinkedList<>(lexicalOutput);
         Type_spec type_spec = type_specRFun();
-        System.out.println(type_spec == null);
-        Token token1 = lexicalOutput.poll(),token2 = lexicalOutput.poll(),token3 = lexicalOutput.poll();
+        Token token1 = lexicalOutput.poll(),token2 = lexicalOutput.poll();
         Params params=paramsRFun();
-        Compound_stmt compound_stmt=compound_stmtRFun();
-        if (type_spec!=null && params != null && compound_stmt != null && token1.tokenName == "<ID>" &&
-                token2.tokenName.equals("<RIGHT_ROUND_B>") && token3.tokenName.equals("<LEFT_ROUND_B>")){
+        Token token3 = lexicalOutput.poll();
+        Compound_stmt compound_stmt = compound_stmtRFun();
+        if (type_spec!=null && params != null && compound_stmt != null && token1.tokenName.equals("<ID>") &&
+                token2.tokenName.equals("<RIGHT_ROUND_B>") && token3.tokenName.equals("<LEFT_ROUND_B>"))
             return new Fun_decl(type_spec, token1, token2, params, token3, compound_stmt);
-        }
+        lexicalOutput = temp;
         return null;
     }
 
@@ -132,11 +130,9 @@ public class Parser {
     private Params paramsRFun(){
         Param_list param_list = param_listRFun();
         if (param_list != null)
-            return new Params(param_list);
+        	return new Params(param_list);
         Token token=lexicalOutput.peek();
-        if(token == null)
-            return  null;
-        if (token.tokenName.equals("<VOID>")){
+        if (token != null && token.tokenName.equals("<VOID>")){
             lexicalOutput.poll();
             return new Params(token);
         }
@@ -148,10 +144,11 @@ public class Parser {
         Param param=paramRFun();
         if (param != null){
             Token token=lexicalOutput.peek();
-            Param_list param_list =param_listRFun();
-            if (token.tokenName.equals("<COMMA>")&& param_list != null){
+            if (token.tokenName.equals("<COMMA>")){
                 lexicalOutput.poll();
-                return new Param_list(param, param_list, token);
+                Param_list param_list =param_listRFun();
+                if(param_list != null)
+                	return new Param_list(param, param_list, token);
             }
             return new Param_list(param);
         }
@@ -161,12 +158,16 @@ public class Parser {
     // Function of the param rule in cGram
     private Param paramRFun(){
         Type_spec type_spec = type_specRFun();
-        Token token1 = lexicalOutput.poll();
+        Token token1 = lexicalOutput.peek();
         if (type_spec != null && token1.tokenName.equals("<ID>")){
+        	lexicalOutput.poll();
+        	Queue<Token> temp = new LinkedList<>(lexicalOutput);
             Token token2 = lexicalOutput.poll();
             Token token3 = lexicalOutput.poll();
-            if (token2.tokenName.equals("RIGHT_SQUARE_B") && token3.tokenName.equals("LEFT_SQUARE_B"))
+            if (token2.tokenName.equals("<RIGHT_SQUARE_B>") && token3.tokenName.equals("<LEFT_SQUARE_B>")) {
                 return new Param(type_spec, token1, token3, token2);
+            }
+            lexicalOutput = temp;
             return new Param(type_spec, token1);
         }
         return null;
@@ -234,6 +235,8 @@ public class Parser {
             return  null;
         if (token1.tokenName.equals("<RIGHT_CURLY_B>") && token2.tokenName.equals("<LEFT_CURLY_B>"))
             return new Compound_stmt(token2, token1, local_declsRFun(), stmt_listRFun());
+            //return new Compound_stmt(token2, token1, null, null);
+
         return null;
     }
 
