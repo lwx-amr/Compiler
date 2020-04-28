@@ -7,9 +7,9 @@ fun_decl → type_spec IDENT ( params ) compound_stmt
 params → param_list | VOID
 param_list → param , param_list | param					// left recursive
 param → type_spec IDENT | type_spec IDENT [ ]
-
 stmt_list → stmt stmt_list | ε						// left recursive fixed
 stmt → expr_stmt | compound_stmt | if_stmt | while_stmt | return_stmt | break_stmt
+
 expr_stmt → expr ; | ;
 while_stmt → WHILE ( expr ) stmt
 compound_stmt → { local_decls stmt_list }

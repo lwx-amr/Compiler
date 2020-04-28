@@ -176,9 +176,8 @@ public class Parser {
     // Function of the stmt_list rule in cGram
     private Stmt_list stmt_listRFun(){
         Stmt stmt = stmtRFun();
-        Stmt_list stmt_list = stmt_listRFun();
-        if (stmt != null && stmt_list != null)
-            return new Stmt_list(stmt,stmt_list);
+        if (stmt != null)
+            return new Stmt_list(stmt, stmt_listRFun());
         return null;
     }
 
@@ -208,8 +207,9 @@ public class Parser {
     // Function of the expr_stmt rule in cGram
     private Expr_stmt expr_stmtRFun(){
         Expr expr = exprRFun();
-        Token token = lexicalOutput.poll();
-        if (token.tokenName.equals("<SEMICOLON>")){
+        Token token = lexicalOutput.peek();
+        if (token != null && token.tokenName.equals("<SEMICOLON>")){
+        	lexicalOutput.poll();
             if (expr != null)
                 return new Expr_stmt(expr, token);
             return new Expr_stmt(token);
@@ -217,97 +217,122 @@ public class Parser {
         return null;
     }
 
-    // Function of the while_stmt rule in cGram
-    private While_stmt while_stmtRFun(){
-        Token token1 = lexicalOutput.poll(),token2=lexicalOutput.poll(),token3=lexicalOutput.poll();
-        Expr expr = exprRFun();
-        Stmt stmt = stmtRFun();
-        if (token1.tokenName.equals("<WHILE>") && token2.tokenName.equals("<RIGHT_ROUND_B>")
-                && token3.tokenName.equals("<LEFT_ROUNDED_B>") && expr != null && stmt != null)
-            return new While_stmt(token1, token3, token2, expr, stmt);
-        return null;
-    }
-
     // Function of the compound_stmt rule in cGram
     private Compound_stmt compound_stmtRFun(){
-        Token token1 = lexicalOutput.poll(), token2 = lexicalOutput.poll() ;
-        if(token1 == null)
-            return  null;
-        if (token1.tokenName.equals("<RIGHT_CURLY_B>") && token2.tokenName.equals("<LEFT_CURLY_B>"))
-            return new Compound_stmt(token2, token1, local_declsRFun(), stmt_listRFun());
-            //return new Compound_stmt(token2, token1, null, null);
-
+    	System.out.println("<----------- Test1 ------------->");
+		for(Token t : lexicalOutput)
+		    System.out.println(t.tokenName);
+		System.out.println("<------------ Test1 ------------>\n");
+        Token token1 = lexicalOutput.peek(), token2;
+        if ((token1 != null) && token1.tokenName.equals("<RIGHT_CURLY_B>")) {
+        	lexicalOutput.poll();
+        	Local_decls local_decls = local_declsRFun();
+        	Stmt_list stmt_list = stmt_listRFun();
+        	token2 = lexicalOutput.peek();
+        	if(token2.tokenName.equals("<LEFT_CURLY_B>"))
+        		return new Compound_stmt(token2, token1, local_decls,  stmt_list);
+        }
         return null;
     }
 
     // Function of the local_decls rule in cGram
     private Local_decls local_declsRFun(){
-        Local_decl local_decl = local_declRFun();
-        if (local_decl != null)
-            return new Local_decls(local_decl, local_declsRFun());
+    	Local_decl local_decl = local_declRFun();	
+    	if (local_decl != null)
+    		return new Local_decls(local_decl, local_declsRFun());
         return null;
     }
 
     // Function of the local_decl rule in cGram
     private Local_decl local_declRFun(){
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
         Type_spec type_spec = type_specRFun();
-        Token token1 =lexicalOutput.peek();
-        if (type_spec != null && token1.tokenName.equals("<ID>")){
+        Token eIDToken = lexicalOutput.peek();
+        if (type_spec != null && eIDToken.tokenName.equals("<ID>")){
             lexicalOutput.poll();
-            Token token2 = lexicalOutput.peek();
-            if (token2.tokenName.equals("<SEMICOLON>"))
-                return new Local_decl(type_spec, token1, token2);
-            lexicalOutput.poll();
-            Token token3 = lexicalOutput.poll() , token4 = lexicalOutput.poll();
-            if (token2.tokenName.equals("<RIGHT_SQUARE_B>") && token3.tokenName.equals("<LEFT_SQUARE_B>")
-                    && token4.tokenName.equals("<SEMICOLAN>"))
-                return new Local_decl(type_spec, token1, token3, token2, token4);
-        }
+            Token nextToID = lexicalOutput.peek();
+            if (nextToID.tokenName.equals("<SEMICOLON>")) {
+            	lexicalOutput.poll();
+            	return new Local_decl(type_spec, eIDToken, nextToID);
+            }
+            Token eLeftBracket = lexicalOutput.poll() , token4 = lexicalOutput.poll();
+            if (nextToID.tokenName.equals("<RIGHT_SQUARE_B>") && eLeftBracket.tokenName.equals("<LEFT_SQUARE_B>")
+	                    && token4.tokenName.equals("<SEMICOLAN>"))
+                return new Local_decl(type_spec, eIDToken, eLeftBracket, nextToID, token4);
+        }        
+        lexicalOutput = temp;
         return null;
     }
 
     // Function of the if_stmt rule in cGram
     private If_stmt if_stmtRFun(){
-        Token token1 = lexicalOutput.poll(), token2 = lexicalOutput.poll(), token3 = lexicalOutput.poll();
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
+        Token token1 = lexicalOutput.poll(), token2 = lexicalOutput.poll(), token3;
         Expr expr = exprRFun();
-        Stmt stmt1 = stmtRFun();
-        if (token1.tokenName.equals("<IF>") && token2.tokenName.equals("<RIGHT_ROUNDED_B>") && expr != null
-                && token3.tokenName.equals("<LEFT_ROUNDED_B>") && stmt1 != null){
-            Token token4 = lexicalOutput.peek();
-            if (token4.tokenName.equals("<ELSE>")){
+        token3 = lexicalOutput.poll();
+        if (token1!=null && token1.tokenName.equals("<IF>") && token2 !=null && token2.tokenName.equals("<RIGHT_ROUNDED_B>") && expr != null
+                && token3 != null&& token3.tokenName.equals("<LEFT_ROUNDED_B>")){
+            Stmt stmt1 = stmtRFun();
+            if(stmt1 != null) {
+                Token token4 = lexicalOutput.peek();
+                if (!token4.tokenName.equals("<ELSE>"))
+                    return new If_stmt(token1, token3, token2, expr, stmt1);
                 lexicalOutput.poll();
                 Stmt stmt2 = stmtRFun();
                 if (stmt2 != null)
                     return new If_stmt(token1, token3, token2, token4, expr, stmt1, stmt2);
             }
-            else
-                return new If_stmt(token1, token3, token2, expr, stmt1);
         }
+        lexicalOutput = temp;
+        return null;
+    }
+    
+    // Function of the while_stmt rule in cGram
+    private While_stmt while_stmtRFun(){
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
+        Token token1 = lexicalOutput.poll(), token2 = lexicalOutput.poll(), token3;
+        Expr expr = exprRFun();
+        token3 = lexicalOutput.poll();
+        if (token1.tokenName.equals("<WHILE>") && token2.tokenName.equals("<RIGHT_ROUND_B>")
+                && token3.tokenName.equals("<LEFT_ROUNDED_B>") && expr != null) {
+        	Stmt stmt = stmtRFun();
+            if(stmt != null)
+            	return new While_stmt(token1, token3, token2, expr, stmt);
+        }
+        lexicalOutput = temp;
         return null;
     }
 
     // Function of the return_stmt rule in cGram
     private Return_stmt return_stmtRFun(){
-        Token token1 = lexicalOutput.poll(), token2 = lexicalOutput.poll();
-        if (token1.tokenName.equals("<RETURN>") && token2.tokenName.equals("<SEMICOLAN>")){
-            Expr expr = exprRFun();
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
+        Token token1 = lexicalOutput.poll(), token2;
+        Expr expr = exprRFun();
+        token2 = lexicalOutput.poll();
+        if (token1 != null && token1.tokenName.equals("<RETURN>") && token2 != null && token2.tokenName.equals("<SEMICOLAN>")){
             if (expr != null)
                 return new Return_stmt(token1, token2, expr);
             return new Return_stmt(token1, token2);
         }
+        lexicalOutput = temp;
         return null;
     }
 
     // Function of the break_stm rule in cGram
     public Break_stmt break_stmtRFun() {
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
         Token token1 = lexicalOutput.poll() , token2 = lexicalOutput.poll();
-        if (token1.tokenName.equals("<BREAK>") && token2.tokenName.equals("<SEMICOLAN>"))
+        if (token1 != null && token1.tokenName.equals("<BREAK>") && token2 != null && token2.tokenName.equals("<SEMICOLAN>"))
             return new Break_stmt(token1, token2);
+        lexicalOutput = temp;
         return null;
     }
+    
 
     // Function of the expr rule in cGram
     private Expr exprRFun(){
+    	if(true)
+    		return null;
         Token token1=lexicalOutput.poll(),token2=lexicalOutput.peek();
         if(token1.tokenName.equals("<ID>") && token2.tokenName.equals("<ASSIGN_OPERATOR>")){
             lexicalOutput.poll();

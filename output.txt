@@ -5,4 +5,6 @@
 <ID> : y
 <LEFT_ROUND_B> : )
 <RIGHT_CURLY_B> : {
+<RETURN> : return
+<SEMICOLON> : ;
 <LEFT_CURLY_B> : }
