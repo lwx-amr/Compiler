@@ -1,8 +1,16 @@
+<FLOAT> : float
+<ID> : z
+<RIGHT_SQUARE_B> : [
+<LEFT_SQUARE_B> : ]
+<SEMICOLON> : ;
 <VOID> : void
 <ID> : x
 <RIGHT_ROUND_B> : (
-<BOOL> : bool
+<INT> : int
 <ID> : y
 <LEFT_ROUND_B> : )
 <RIGHT_CURLY_B> : {
+<INT> : int
+<ID> : x
+<SEMICOLON> : ;
 <LEFT_CURLY_B> : }

@@ -35,7 +35,7 @@ public class Compiler {
 		
 		/*
 		 * Step One
-		 * Calling Lexical analyzer for tokenization
+		 * Calling Lexical analyzer to get tokens ready
 		*/
 
 		LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(mappingTable, inputFile);

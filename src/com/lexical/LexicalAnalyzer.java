@@ -48,17 +48,6 @@ public class LexicalAnalyzer {
 		lexicalLogger();
 	}
 
-	// Remove detected from file
-	private String removeDetected(Matcher regexMatcher, String bufferedFile){
-		StringBuffer tempBuffer = new StringBuffer();
-		tempBuffer.append(bufferedFile);
-		String bufferStr = "";
-		for (int i = 0; i < (regexMatcher.end() - regexMatcher.start()); i++)
-			bufferStr += ' ';
-		tempBuffer.replace(regexMatcher.start(), regexMatcher.end(), bufferStr);
-		return tempBuffer.toString();
-	}
-
 	// Detected patterns matchers with regex
 	public ArrayList<Token> checkRegex(TableCell tableCell) {
 		ArrayList<Token> currentTokenList = new ArrayList<>();

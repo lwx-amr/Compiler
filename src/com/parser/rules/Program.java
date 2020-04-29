@@ -1,7 +1,6 @@
 package com.parser.rules;
 
 import com.parser.Node;
-import com.parser.Node;
 
 public class Program implements Node{
     Decl_List decl_list;

@@ -14,11 +14,11 @@ public class Local_decl implements Node{
         semiColon = sc;
     }
 
-    public Local_decl(Type_spec ts, Token id, Token lb, Token rb , Token sc) {
+    public Local_decl(Type_spec ts, Token id, Token rb , Token lb,Token sc) {
         type_spec = ts;
         ident = id;
-        left_bracket=lb;
         right_bracket = rb;
+        left_bracket=lb;
         semiColon = sc;
     }
     

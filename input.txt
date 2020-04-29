@@ -1,3 +1,4 @@
-void x (bool y){
-	
+float z[];
+void x (int y){
+	int x;
 }
