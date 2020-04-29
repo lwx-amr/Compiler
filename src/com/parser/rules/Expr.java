@@ -10,7 +10,8 @@ public class Expr implements Node{
     OP operation;
     Args args;
     Type_spec type_spec;
-
+    Expr_Dash exprDash1, exprDash2;
+    
     public Expr(Token id, Token op, Expr expr) {
         this.expr1 = expr;
         this.ident = id;
@@ -26,10 +27,10 @@ public class Expr implements Node{
         this.expr2 = expr2;
     }
     
-    public Expr( Expr expr1, OP operation,Expr expr2){
-        this.expr1=expr1;
+    public Expr( Expr_Dash expr1, OP operation,Expr_Dash expr2){
+        this.exprDash1=expr1;
         this.operation = operation;
-        this.expr2 = expr2;
+        this.exprDash2 = expr2;
     }
 
     public Expr(Token op, Expr expr) {

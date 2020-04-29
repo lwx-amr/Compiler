@@ -24,7 +24,7 @@ expr → IDENT = expr | IDENT [ expr ] = expr
 	→ ( expr )
 	→  IDENT [ expr ] | IDENT ( args ) | IDENT . size
 	→  NEW type_spec [ expr ]
-	→ IDENT |BOOL_LIT | INT_LIT | FLOAT_LIT
+expr_dash → IDENT |BOOL_LIT | INT_LIT | FLOAT_LIT	
 op → OR | EQ | NE | LE | < | GE | > | AND | + | - | * | / | %  
 arg_list → expr , arg_list | expr 					// left recursive
 args → arg_list | ε
