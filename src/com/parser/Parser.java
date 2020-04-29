@@ -322,17 +322,19 @@ public class Parser {
         return null;
     }
     
-
-    // Function of the expr rule in cGram
-    private Expr exprRFun(){
-        Token token1=lexicalOutput.poll(),token2=lexicalOutput.peek();
-        if(token1.tokenName.equals("<ID>") && token2.tokenName.equals("<ASSIGN_OPERATOR>")){
+    /* ----------------------- EXP With all Functions --------------------------*/
+    
+    // Check First condition in exp rule
+    private Expr exprFirstCond() {
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
+    	Token token1=lexicalOutput.poll(),token2=lexicalOutput.peek();
+        if(token1 != null && token1.tokenName.equals("<ID>") && token2 != null && token2.tokenName.equals("<ASSIGN_OPERATOR>")){
             lexicalOutput.poll();
             Expr expr = exprRFun();
             if (expr!=null)
                 return new Expr(token1,token2,expr);
         }
-        else if (token1.tokenName.equals("<IDE>") &&token2.tokenName.equals("<RIGHT_SQUARE>")) {
+        else if (token1 != null && token1.tokenName.equals("<IDE>") && token2 != null && token2.tokenName.equals("<RIGHT_SQUARE>")) {
             lexicalOutput.poll();
             Expr expr = exprRFun();
             if (expr!=null) {
@@ -344,77 +346,98 @@ public class Parser {
                 }
             }
         }
-        Expr expr = exprRFun();
-        if (expr!=null)
-        {
+        lexicalOutput = temp;
+        return null;
+    }
+    
+    // Check Second condition in exp rule
+    private Expr exprSecondCond() {
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
+        Expr expr1 = exprRFun();
+        if (expr1!=null){
             OP op=opRFun();
-            Expr expr1 = exprRFun();
-            if (expr1!=null&&op!=null)
-                return new Expr(expr,op,expr1);
-            return null;
+            if(op != null) {
+                Expr expr2 = exprRFun();
+                if(expr2 != null)
+                    return new Expr(expr1,op,expr2);
+            }
         }
-        if (token1.tokenName.equals("<PLUS>") ||token1.tokenName.equals("<MINUS>") ||token1.tokenName.equals("<NOT>")) {
-            expr = exprRFun();
+        lexicalOutput = temp;
+        return null;
+    }
+    
+    // Check Third condition in exp rule
+    private Expr exprThirdCond() {
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
+        Token token1 = lexicalOutput.poll();
+        if (token1 != null && ( token1.tokenName.equals("<PLUS>") ||token1.tokenName.equals("<MINUS>") ||token1.tokenName.equals("<NOT>") )) {
+            Expr expr = exprRFun();
             if (expr!=null)
                 return new Expr(token1,expr);
         }
-        else if (token1.tokenName.equals("<RIGHT_ROUNDED_B>")) {
-            expr = exprRFun();
-            if (expr!=null){
-                token2=lexicalOutput.peek();
-                assert token2 != null;
-                if (token2.tokenName.equals("<LEFT_ROUNDED>"))
-                    return new Expr(token1,expr,token2);
-            }
+        lexicalOutput = temp;
+        return null;
+    }
+
+    // Check Fourth condition in exp rule
+    private Expr exprFourthCond() {
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
+        Token token1 = lexicalOutput.poll(), token2;
+        if (token1 != null && token1.tokenName.equals("<RIGHT_ROUNDED_B>")) {
+            Expr expr=exprRFun();
+            token2 = lexicalOutput.poll();
+            if ( token2 != null && token2.tokenName.equals("<LEFT_ROUNDED_N>"))
+            	return new Expr(token1, expr,token2);
         }
-        if (token1.tokenName.equals("<ID>")) {
-            if (token2.tokenName.equals("<RIGHT_SQUARE_B>")) {
-                lexicalOutput.poll();
-                expr=exprRFun();
-                Token token3=lexicalOutput.peek();
-                assert token3 != null;
-                if (token3.tokenName.equals("<LEFT_SQUARE_B>")) {
-                    lexicalOutput.poll();
+        lexicalOutput = temp;
+        return null;
+    }
+    
+    // Check Fifth condition in exp rule
+    private Expr exprFifthCond() {
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
+        Token token1 = lexicalOutput.poll(), token2;
+        if (token1 != null && token1.tokenName.equals("<ID>")) {
+        	token2 = lexicalOutput.poll();
+            if (token2 != null && token2.tokenName.equals("<RIGHT_SQUARE_B>")) {
+                Expr expr=exprRFun();
+                Token token3=lexicalOutput.poll();
+                if (token3 != null && token3.tokenName.equals("<LEFT_SQUARE_B>"))
                     return new Expr(token1,token2,expr,token3);
-                }
             }
-            else if (token2.tokenName.equals("<RIGHT_ROUNDED_B>")) {
-                lexicalOutput.poll();
+            else if (token2 != null && token2.tokenName.equals("<RIGHT_ROUNDED_B>")) {
                 Args args=argsRFun();
                 if (args!=null) {
-                    Token token3=lexicalOutput.peek();
-                    assert token3 != null;
-                    if (token3.tokenName.equals("<LEFT_ROUNDED_N>")){
-                        lexicalOutput.poll();
+                    Token token3=lexicalOutput.poll();
+                    if ( token3 != null && token3.tokenName.equals("<LEFT_ROUNDED_N>"))
                         return new Expr(token1,token2,args,token3);
-                    }
                 }
             }
-            else if (token2.tokenName.equals("<DOT>")) {
-                lexicalOutput.poll();
-                Token token3=lexicalOutput.peek();
-                assert token3 != null;
-                if (token3.tokenName.equals("<SIZE_OF>")) {
-                    lexicalOutput.poll();
+            else if (token2 != null && token2.tokenName.equals("<DOT>")) {
+                Token token3=lexicalOutput.poll();
+                if (token3 != null && token3.tokenName.equals("<SIZE_OF>"))
                     return new Expr(token1,token2,token3);
-                }
             }
             return new Expr(token1);
         }
-        if (token1.equals("<BOOL_LITERAL>") || token1.tokenName.equals("<INTEGRAL_LITERAL>") || token1.tokenName.equals("<FLOAT_LITERAL>"))
-            return new Expr(token1);
-        if(token1.tokenName.equals("<NEW>")) {
+        lexicalOutput = temp;
+        return null;
+    }
+    
+    // Check Sixth condition in exp rule
+    private Expr exprSixthCond() {
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
+    	Token token1=lexicalOutput.poll(), token2;
+        if(token1 != null && token1.tokenName.equals("<NEW>")) {
             Type_spec type_spec=type_specRFun();
             if (type_spec!=null) {
                 token2=lexicalOutput.peek();
-                assert token2 != null;
-                if(token2.tokenName.equals("<RIGHT_SQUARE_B>")) {
+                if(token2 != null && token2.tokenName.equals("<RIGHT_SQUARE_B>")) {
                     lexicalOutput.poll();
-                    expr=exprRFun();
+                    Expr expr=exprRFun();
                     if (expr!=null) {
                         Token token3=lexicalOutput.peek();
-                        assert token3 != null;
-                        if(token3.tokenName.equals("<LEFT_ROUNDED_B>")) {
+                        if(token3 != null && token3.tokenName.equals("<LEFT_ROUNDED_B>")) {
                             lexicalOutput.poll();
                             return new Expr(token1,type_spec,token2,expr,token3);
                         }
@@ -422,6 +445,58 @@ public class Parser {
                 }
             }
         }
+        lexicalOutput = temp;
+        return null;
+    }
+    
+    // Check Last condition in exp rule
+    private Expr exprLastCond() {
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
+        Token token1 = lexicalOutput.poll();
+        if (token1 != null && ( token1.tokenName.equals("<ID>") || token1.tokenName.equals("<BOOL_LITERAL>") || token1.tokenName.equals("<INTEGRAL_LITERAL>") || token1.tokenName.equals("<FLOAT_LITERAL>") ))
+                return new Expr(token1);
+        lexicalOutput = temp;
+        return null;
+    }
+    
+    // Function of the expr rule in cGram
+    private Expr exprRFun(){
+        
+    	// First Condition
+    	Expr firstCond = exprFirstCond();
+        if(firstCond != null)
+        	return firstCond ;        
+        
+        // Second Condition
+    	Expr secondCond = exprSecondCond();
+        if(secondCond != null)
+        	return secondCond ;        
+        
+        // Third Condition
+    	Expr thirdCond = exprThirdCond();
+        if(thirdCond  != null)
+        	return thirdCond  ;
+        
+        // Fourth Condition
+    	Expr fourthCond = exprFourthCond();
+        if(fourthCond != null)
+        	return fourthCond ; 
+        
+        // Fifth Condition
+    	Expr fifthCond = exprFifthCond();
+        if(fifthCond != null)
+        	return fifthCond ; 
+        
+        // Sixth Condition
+    	Expr sixthCond = exprSixthCond();
+        if(sixthCond != null)
+        	return sixthCond ; 
+        
+        // Last Condition
+    	Expr lastCond = exprLastCond();
+        if(lastCond != null)
+        	return lastCond ; 
+        
         return null;
     }
 
@@ -446,6 +521,7 @@ public class Parser {
     }
 
     // Function of the op rule in cGram
+    
     private OP opRFun(){
         Token token = lexicalOutput.poll();
         if(operators.indexOf(token.tokenName) != -1)
