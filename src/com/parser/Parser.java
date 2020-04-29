@@ -353,11 +353,11 @@ public class Parser {
     // Check Second condition in exp rule
     private Expr exprSecondCond() {
         Queue<Token> temp = new LinkedList<>(lexicalOutput);
-        Expr expr1 = exprRFun();
+        Expr_Dash expr1 = expr_DashRFun();
         if (expr1!=null){
             OP op=opRFun();
             if(op != null) {
-                Expr expr2 = exprRFun();
+            	Expr_Dash expr2 = expr_DashRFun();
                 if(expr2 != null)
                     return new Expr(expr1,op,expr2);
             }
@@ -449,15 +449,6 @@ public class Parser {
         return null;
     }
     
-    // Check Last condition in exp rule
-    private Expr exprLastCond() {
-        Queue<Token> temp = new LinkedList<>(lexicalOutput);
-        Token token1 = lexicalOutput.poll();
-        if (token1 != null && ( token1.tokenName.equals("<ID>") || token1.tokenName.equals("<BOOL_LITERAL>") || token1.tokenName.equals("<INTEGRAL_LITERAL>") || token1.tokenName.equals("<FLOAT_LITERAL>") ))
-                return new Expr(token1);
-        lexicalOutput = temp;
-        return null;
-    }
     
     // Function of the expr rule in cGram
     private Expr exprRFun(){
@@ -471,7 +462,7 @@ public class Parser {
     	Expr secondCond = exprSecondCond();
         if(secondCond != null)
         	return secondCond ;        
-        
+
         // Third Condition
     	Expr thirdCond = exprThirdCond();
         if(thirdCond  != null)
@@ -492,11 +483,6 @@ public class Parser {
         if(sixthCond != null)
         	return sixthCond ; 
         
-        // Last Condition
-    	Expr lastCond = exprLastCond();
-        if(lastCond != null)
-        	return lastCond ; 
-        
         return null;
     }
 
@@ -515,6 +501,16 @@ public class Parser {
         return null;
     }
 
+    //  Function of the Expr Dash rule in cGram
+    private Expr_Dash expr_DashRFun() {
+        Queue<Token> temp = new LinkedList<>(lexicalOutput);
+        Token token1 = lexicalOutput.poll();
+        if (token1 != null && ( token1.tokenName.equals("<ID>") || token1.tokenName.equals("<BOOL_LITERAL>") || token1.tokenName.equals("<INTEGRAL_LITERAL>") || token1.tokenName.equals("<FLOAT_LITERAL>") ))
+        	return new Expr_Dash(token1);
+        lexicalOutput = temp;
+        return null;
+    }
+    
     // Function of the args rule in cGram
     private Args argsRFun(){
         return new Args(arg_listRFun());

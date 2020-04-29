@@ -1,4 +1,5 @@
 float z[];
-void x (int y){
-	int x;
+
+if ( x > y ) {
+	return ;
 }
