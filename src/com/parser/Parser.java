@@ -506,7 +506,7 @@ public class Parser {
         if (expr != null){
             Token token = lexicalOutput.peek();
             Arg_list arg_list = arg_listRFun();
-            if (token.tokenName.equals("<COMMA>") && arg_list != null){
+            if (arg_list != null && token != null && token.tokenName.equals("<COMMA>")){
                 lexicalOutput.poll();
                 return new Arg_list(expr, token, arg_list);
             }

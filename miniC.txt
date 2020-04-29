@@ -17,7 +17,6 @@ local_decl → type_spec IDENT ; | type_spec IDENT [ ] ;
 if_stmt → IF ( expr ) stmt | IF ( expr ) stmt ELSE stmt
 return_stmt → RETURN ; | RETURN expr ;
 break_stmt → break ;
-
 expr → IDENT = expr | IDENT [ expr ] = expr
 	→ expr_dash op expr_dash							// left factor and left recursive
 	→ BOOL_LIT | INT_LIT | FLOAT_LIT | NEW type_spec [ expr ]
@@ -26,7 +25,6 @@ expr → IDENT = expr | IDENT [ expr ] = expr
 	→  IDENT [ expr ] | IDENT ( args ) | IDENT . size
 	→  NEW type_spec [ expr ]
 	→ IDENT |BOOL_LIT | INT_LIT | FLOAT_LIT
-
 op → OR | EQ | NE | LE | < | GE | > | AND | + | - | * | / | %  
 arg_list → expr , arg_list | expr 					// left recursive
 args → arg_list | ε
