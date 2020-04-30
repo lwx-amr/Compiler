@@ -14,7 +14,7 @@ public class Expr_Dash implements Node{
     @Override
     public void printNode() {
         if (this.expr_dash!=null)
-            System.err.println("Expr_Dash: "+expr_dash.value);
+            System.out.println("Expr_Dash: "+expr_dash.value);
     }
     
 }

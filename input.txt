@@ -1,5 +1,5 @@
-float z[];
-
-if ( x > y ) {
-	return ;
-}
+void funName ( void ) {
+	while ( true ) {
+		break;
+	}
+}	

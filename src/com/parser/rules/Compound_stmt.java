@@ -18,10 +18,22 @@ public class Compound_stmt implements Node {
     
     @Override
     public void printNode() {
-        if (left_bracket != null && right_bracket != null && local_decls != null && stmt_list != null){
-            System.out.println("Compound_stmt: "+right_bracket.value+" + Local_decls + Stmt_list + " +left_bracket.value);
-            local_decls.printNode();
-            stmt_list.printNode();
+        if (left_bracket != null && right_bracket != null){
+			if(local_decls != null ){
+				if(stmt_list != null) {
+		            System.out.println("Compound_stmt: "+right_bracket.value+" + Local_decls + Stmt_list + " +left_bracket.value);
+		            local_decls.printNode();
+		            stmt_list.printNode();
+				} else {
+					System.out.println("Compound_stmt: "+right_bracket.value+" + Local_decls + " +left_bracket.value);
+		            local_decls.printNode();
+		        }
+	        } else if(stmt_list != null) {
+	            System.out.println("Compound_stmt: "+right_bracket.value+" + Stmt_list + " +left_bracket.value);
+	            stmt_list.printNode();
+	        } else {
+	        	System.out.println("Compound_stmt: "+right_bracket.value+left_bracket.value);
+	        }
         }
     }
 }

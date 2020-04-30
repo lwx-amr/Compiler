@@ -37,8 +37,9 @@ public class If_stmt implements Node{
             else_stmt.printNode();
         }
         else {
-             System.out.println("If_stmt: "+if_token.value + " + " + right_brakcet.value + " + expr + " + left_braket.value);
+            System.out.println("If_stmt: "+if_token.value + " + " + right_brakcet.value + " + expr + " + left_braket.value + " + stmt");
             expr.printNode();
+            if_stmt.printNode();
         }
     }
 }

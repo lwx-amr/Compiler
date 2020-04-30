@@ -30,7 +30,7 @@ public class Parser {
      * ================
      */
 
-    // The main function to run the process of creating parse tree
+    // The main x	function to run the process of creating parse tree
     public Program parse(){
 		System.out.println("<----------- Begin ------------->");
 		for(Token t : lexicalOutput)
@@ -112,9 +112,9 @@ public class Parser {
     // Function of the fun_decl rule in cGram
     private Fun_decl fun_declRFun(){
     	Queue<Token> temp = new LinkedList<>(lexicalOutput);
-        Type_spec type_spec = type_specRFun();
+    	Type_spec type_spec = type_specRFun();
         Token token1 = lexicalOutput.poll(),token2 = lexicalOutput.poll();
-        Params params=paramsRFun();
+        Params params = paramsRFun();
         Token token3 = lexicalOutput.poll();
         Compound_stmt compound_stmt = compound_stmtRFun();
         if (type_spec!=null && params != null && compound_stmt != null && token1.tokenName.equals("<ID>") &&
@@ -126,19 +126,23 @@ public class Parser {
 
     // Function of the params rule in cGram
     private Params paramsRFun(){
+    	Queue<Token> temp = new LinkedList<>(lexicalOutput);
         Param_list param_list = param_listRFun();
         if (param_list != null)
         	return new Params(param_list);
         Token token=lexicalOutput.peek();
+        System.out.println();
         if (token != null && token.tokenName.equals("<VOID>")){
             lexicalOutput.poll();
             return new Params(token);
         }
+        lexicalOutput = temp;
         return null;
     }
 
     // Function of the param_list rule in cGram
     private Param_list param_listRFun(){
+    	Queue<Token> temp = new LinkedList<>(lexicalOutput);
         Param param=paramRFun();
         if (param != null){
             Token token=lexicalOutput.peek();
@@ -150,11 +154,13 @@ public class Parser {
             }
             return new Param_list(param);
         }
+        lexicalOutput = temp;
         return null;
     }
 
     // Function of the param rule in cGram
     private Param paramRFun(){
+    	Queue<Token> temp1 = new LinkedList<>(lexicalOutput);
         Type_spec type_spec = type_specRFun();
         Token token1 = lexicalOutput.peek();
         if (type_spec != null && token1.tokenName.equals("<ID>")){
@@ -162,12 +168,12 @@ public class Parser {
         	Queue<Token> temp = new LinkedList<>(lexicalOutput);
             Token token2 = lexicalOutput.poll();
             Token token3 = lexicalOutput.poll();
-            if (token2.tokenName.equals("<RIGHT_SQUARE_B>") && token3.tokenName.equals("<LEFT_SQUARE_B>")) {
+            if (token2.tokenName.equals("<RIGHT_SQUARE_B>") && token3.tokenName.equals("<LEFT_SQUARE_B>"))
                 return new Param(type_spec, token1, token3, token2);
-            }
             lexicalOutput = temp;
             return new Param(type_spec, token1);
         }
+        lexicalOutput = temp1;
         return null;
     }
 
@@ -264,8 +270,7 @@ public class Parser {
         Token token1 = lexicalOutput.poll(), token2 = lexicalOutput.poll(), token3;
         Expr expr = exprRFun();
         token3 = lexicalOutput.poll();
-        if (token1!=null && token1.tokenName.equals("<IF>") && token2 !=null && token2.tokenName.equals("<RIGHT_ROUNDED_B>") && expr != null
-                && token3 != null&& token3.tokenName.equals("<LEFT_ROUNDED_B>")){
+        if (token1 !=null && token1.tokenName.equals("<IF>") && token2 !=null && token2.tokenName.equals("<RIGHT_ROUND_B>") && expr != null && token3 != null && token3.tokenName.equals("<LEFT_ROUND_B>")){
             Stmt stmt1 = stmtRFun();
             if(stmt1 != null) {
                 Token token4 = lexicalOutput.peek();
@@ -287,8 +292,8 @@ public class Parser {
         Token token1 = lexicalOutput.poll(), token2 = lexicalOutput.poll(), token3;
         Expr expr = exprRFun();
         token3 = lexicalOutput.poll();
-        if (token1.tokenName.equals("<WHILE>") && token2.tokenName.equals("<RIGHT_ROUND_B>")
-                && token3.tokenName.equals("<LEFT_ROUNDED_B>") && expr != null) {
+        if (token1 !=null && token1.tokenName.equals("<WHILE>") && token2 !=null && token2.tokenName.equals("<RIGHT_ROUND_B>")
+        		&& token3 !=null && token3.tokenName.equals("<LEFT_ROUND_B>") && expr != null) {
         	Stmt stmt = stmtRFun();
             if(stmt != null)
             	return new While_stmt(token1, token3, token2, expr, stmt);
@@ -360,7 +365,8 @@ public class Parser {
             	Expr_Dash expr2 = expr_DashRFun();
                 if(expr2 != null)
                     return new Expr(expr1,op,expr2);
-            }
+            } else
+            	return new Expr(expr1);
         }
         lexicalOutput = temp;
         return null;
@@ -383,10 +389,10 @@ public class Parser {
     private Expr exprFourthCond() {
         Queue<Token> temp = new LinkedList<>(lexicalOutput);
         Token token1 = lexicalOutput.poll(), token2;
-        if (token1 != null && token1.tokenName.equals("<RIGHT_ROUNDED_B>")) {
+        if (token1 != null && token1.tokenName.equals("<RIGHT_ROUND_B>")) {
             Expr expr=exprRFun();
             token2 = lexicalOutput.poll();
-            if ( token2 != null && token2.tokenName.equals("<LEFT_ROUNDED_N>"))
+            if ( token2 != null && token2.tokenName.equals("<LEFT_ROUND_N>"))
             	return new Expr(token1, expr,token2);
         }
         lexicalOutput = temp;
@@ -405,11 +411,11 @@ public class Parser {
                 if (token3 != null && token3.tokenName.equals("<LEFT_SQUARE_B>"))
                     return new Expr(token1,token2,expr,token3);
             }
-            else if (token2 != null && token2.tokenName.equals("<RIGHT_ROUNDED_B>")) {
+            else if (token2 != null && token2.tokenName.equals("<RIGHT_ROUND_B>")) {
                 Args args=argsRFun();
                 if (args!=null) {
                     Token token3=lexicalOutput.poll();
-                    if ( token3 != null && token3.tokenName.equals("<LEFT_ROUNDED_N>"))
+                    if ( token3 != null && token3.tokenName.equals("<LEFT_ROUND_N>"))
                         return new Expr(token1,token2,args,token3);
                 }
             }
@@ -437,7 +443,7 @@ public class Parser {
                     Expr expr=exprRFun();
                     if (expr!=null) {
                         Token token3=lexicalOutput.peek();
-                        if(token3 != null && token3.tokenName.equals("<LEFT_ROUNDED_B>")) {
+                        if(token3 != null && token3.tokenName.equals("<LEFT_ROUND_B>")) {
                             lexicalOutput.poll();
                             return new Expr(token1,type_spec,token2,expr,token3);
                         }
@@ -449,20 +455,19 @@ public class Parser {
         return null;
     }
     
-    
     // Function of the expr rule in cGram
     private Expr exprRFun(){
         
     	// First Condition
     	Expr firstCond = exprFirstCond();
         if(firstCond != null)
-        	return firstCond ;        
-        
+        	return firstCond ;              
+
         // Second Condition
     	Expr secondCond = exprSecondCond();
         if(secondCond != null)
-        	return secondCond ;        
-
+        	return secondCond ;
+        
         // Third Condition
     	Expr thirdCond = exprThirdCond();
         if(thirdCond  != null)
@@ -505,8 +510,12 @@ public class Parser {
     private Expr_Dash expr_DashRFun() {
         Queue<Token> temp = new LinkedList<>(lexicalOutput);
         Token token1 = lexicalOutput.poll();
-        if (token1 != null && ( token1.tokenName.equals("<ID>") || token1.tokenName.equals("<BOOL_LITERAL>") || token1.tokenName.equals("<INTEGRAL_LITERAL>") || token1.tokenName.equals("<FLOAT_LITERAL>") ))
+        if (token1 != null && ( token1.tokenName.equals("<ID>")|| token1.tokenName.equals("<INTEGRAL_LITERAL>") || token1.tokenName.equals("<FLOAT_LITERAL>") || token1.tokenName == "<BOOL_LITERAL>"))
         	return new Expr_Dash(token1);
+        else if (token1 != null && (token1.tokenName.equals("<TRUE>")|| token1.tokenName.equals("<FALSE>"))){
+        	token1.tokenName = "<BOOL_LITERAL>";
+        	return new Expr_Dash(token1);
+        }
         lexicalOutput = temp;
         return null;
     }
@@ -517,11 +526,12 @@ public class Parser {
     }
 
     // Function of the op rule in cGram
-    
     private OP opRFun(){
-        Token token = lexicalOutput.poll();
-        if(operators.indexOf(token.tokenName) != -1)
-            return new OP(token);
+        Token token = lexicalOutput.peek();
+        if(operators.indexOf(token.tokenName) != -1) {
+        	lexicalOutput.poll();
+        	return new OP(token);
+        }
         return null;
     }
 

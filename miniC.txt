@@ -18,8 +18,7 @@ if_stmt → IF ( expr ) stmt | IF ( expr ) stmt ELSE stmt
 return_stmt → RETURN ; | RETURN expr ;
 break_stmt → break ;
 expr → IDENT = expr | IDENT [ expr ] = expr
-	→ expr_dash op expr_dash							// left factor and left recursive
-	→ BOOL_LIT | INT_LIT | FLOAT_LIT | NEW type_spec [ expr ]
+	→ expr_dash op expr_dash | expr_dash							// left factor and left recursive
 	→ ! expr | - expr | + expr
 	→ ( expr )
 	→  IDENT [ expr ] | IDENT ( args ) | IDENT . size

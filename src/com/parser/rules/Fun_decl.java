@@ -20,6 +20,8 @@ public class Fun_decl implements Node {
     
     @Override
     public void printNode() {
+
+    	System.out.println("Here");
         if(type != null && params != null && com_stmt != null && right_bracket != null && 
                 left_braket != null && ident != null){
             System.out.println("Fun_decl: Type_spec + "+right_bracket.value+" + Params + "

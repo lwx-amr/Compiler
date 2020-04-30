@@ -9,7 +9,7 @@ public class While_stmt implements Node {
     Expr expr;
     Stmt stmt;
 
-    public While_stmt(Token token, Token left_braket, Token right_braket, Expr expr, Stmt stmt) {
+    public While_stmt(Token token, Token right_braket, Token left_braket, Expr expr, Stmt stmt) {
         this.token = token;
         this.left_braket = left_braket;
         this.right_braket = right_braket;
@@ -20,7 +20,7 @@ public class While_stmt implements Node {
     @Override
     public void printNode() {
         if(token != null && left_braket != null && right_braket != null && expr != null && stmt != null){
-            System.out.println("While_stmt: "+token.value+" + "+left_braket.value+ " + expr + " + right_braket.value + "Stmt");
+            System.out.println("While_stmt: "+token.value+" + "+left_braket.value+ " + expr + " + right_braket.value + " + stmt");
             expr.printNode();
             stmt.printNode();
         }

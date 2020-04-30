@@ -32,6 +32,10 @@ public class Expr implements Node{
         this.operation = operation;
         this.exprDash2 = expr2;
     }
+    
+    public Expr( Expr_Dash expr1){
+        this.exprDash1=expr1;
+    }
 
     public Expr(Token op, Expr expr) {
         this.expr1 = expr;
@@ -85,14 +89,14 @@ public class Expr implements Node{
             expr1.printNode();
             expr2.printNode();
         }
-        else if (expr1 != null && expr2 != null && operation !=null){
-            System.out.println("Expr: Expr + OP + Expr");
-            expr1.printNode();
-            expr2.printNode();
+        else if (exprDash1 != null && exprDash2 != null && operation !=null){
+            System.out.println("Expr: Expr_Dash + OP + Expr_Dash");
+            exprDash1.printNode();
+            exprDash2.printNode();
         }
-        else if (expr1 != null && op != null){
-            System.out.println("Expr: "+op.value+" + Expr");
-            expr1.printNode();
+        else if (exprDash1 != null){
+            System.out.println("Expr: Expr_Dash");
+            exprDash1.printNode();
         }
         else if (left_bracket != null && right_bracket != null && expr1 !=null && ident == null){
             System.out.println("Expr: "+right_bracket.value+" + Expr + "+left_bracket.value);
@@ -118,6 +122,6 @@ public class Expr implements Node{
             System.out.println("Expr: "+ident.value); 
         }
         else
-            System.out.println("A7A");
+            System.out.println("What?!");
     }
 }
